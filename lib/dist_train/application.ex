@@ -9,13 +9,14 @@ defmodule DistTrain.Application do
   def start(_type, _args) do
     children = [
       DistTrainWeb.Telemetry,
-      DistTrain.Repo,
+      # DistTrain.Repo,  # Commented out for demo - we don't need database
       {DNSCluster, query: Application.get_env(:dist_train, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: DistTrain.PubSub},
       # Start the Finch HTTP client for sending emails
       {Finch, name: DistTrain.Finch},
-      # Start a worker by calling: DistTrain.Worker.start_link(arg)
-      # {DistTrain.Worker, arg},
+      # Start neural network components
+      DistTrain.NeuralNetwork.NodeManager,
+      DistTrain.NeuralNetwork.Coordinator,
       # Start to serve requests, typically the last entry
       DistTrainWeb.Endpoint
     ]
